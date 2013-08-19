@@ -2,11 +2,21 @@ include_recipe "jenkins"
 include_recipe "ant"
 
 include_recipe "php"
-php_pear "pear.phpqatools.org/phpqatools" do
-  action :install
+
+execute "enable pear autodiscovery" do
+  command "pear config-set auto_discover 1"
+  action :run
+  not_if "pear config-get auto_discover 2> /dev/null | grep '1'"
 end
-php_pear "pear.netpirates.net/phpDox" do
-  action :install
+
+execute "install phpqatools" do
+  command "pear install pear install pear.phpqatools.org/phpqatools > /dev/null 2>&1 &"
+  action :run
+end
+
+execute "install phpDox" do
+  command "pear install pear.netpirates.net/phpDox > /dev/null 2>&1 &"
+  action :run
 end
 
 #workaround for https://github.com/fnichol/chef-jenkins/issues/9
